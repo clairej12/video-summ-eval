@@ -43,7 +43,7 @@ def recall(truths,preds,metric,thresh):
     num_common = common_keyframes(truths,preds,metric,thresh)
     return num_common / len(truths)
 
-def precision(truths,preds,metric, thresh):
+def precision(truths,preds,metric,thresh):
     num_common = common_keyframes(truths,preds,metric,thresh)
     return num_common / len(preds)
 
