@@ -1,23 +1,37 @@
 import numpy
 # import image_similarity_measures
 from image_similarity_measures.quality_metrics import rmse, psnr, ssim, fsim, issm, sre, uiq  
-        
+
+LESS = "smaller is better"
+GREATER = "larger is better"
+direction = {
+    "rmse": LESS, 
+    "psnr": GREATER, 
+    "ssim": GREATER, 
+    "fsim": GREATER, 
+    # "issm":, 
+    "sre": GREATER, 
+    "uiq": GREATER
+}
+
 def score(truth,pred,metric):
-    match metric:
-        case 'rmse':
-            score = rmse(truth, pred)
-        case 'psnr':
-            score = psnr(truth, pred)
-        case 'ssim':
-            score = ssim(truth, pred)
-        case 'fsim':
-            score = fsim(truth, pred)
-        case 'issm':
-            score = issm(truth, pred)
-        case 'sre':
-            score = sre(truth, pred)
-        case 'uiq':
-            score = uiq(truth, pred)
+    if metric == 'rmse': # absolute error
+        score = rmse(truth, pred)
+    elif metric == 'psnr': # absolute error
+        score = psnr(truth, pred)
+    elif metric == 'ssim': # ranges from [0,1]
+        score = ssim(truth, pred)
+    elif metric == 'fsim': # ranges from [0,1]
+        score = fsim(truth, pred)
+    elif metric == 'issm':
+        score = issm(truth, pred)
+    elif metric == 'sre':
+        score = sre(truth, pred)
+    elif metric == 'uiq': # ranges from [-1,1]
+        score = uiq(truth, pred)
+    else:
+        score = None
+        print('Unknown metric')
     return score 
 
 def common_keyframes(truths,preds,metric,thresh,frames = False):
@@ -31,7 +45,8 @@ def common_keyframes(truths,preds,metric,thresh,frames = False):
             if score(truth,pred,metric) > best_score:
                 best_score = score(truth,pred,metric)
                 matching = truth
-        if best_score >= thresh:
+        if (direction[metric] == GREATER and best_score >= thresh) \
+        or (direction[metric] == LESS and best_score <= thresh):
             num_common +=1
             if frames:
                 common.append((pred,matching,best_score))

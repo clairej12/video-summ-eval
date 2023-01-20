@@ -1,30 +1,35 @@
 import numpy
-import cv2 as cv
+import cv2
 import os
 import sys
 from evaluation import *
+import pdb
 
 thresholds = {
-    "rmse":, 
-    "psnr":, 
-    "ssim":, 
-    "fsim":, 
-    "issm":, 
-    "sre":, 
-    "uiq": 
+    "rmse":0.01, 
+    "psnr":40, 
+    "ssim":0.9, 
+    "fsim":0.45, 
+    # "issm":, 
+    "sre":42, 
+    "uiq":0.1
 }
 
-def main(gt_path, pred_path,metrics == None):
+def main(gt_path, pred_path,metric_list = None):
     truths = []
     preds = []
-    for file in os.walk(gt_path)
-        if '.jpg' in file:
-            im = cv2.imread(gt_path+'/'+file,mode='RGB')
-            truths.append(im)
-    for file in os.walk(pred_path)
-        if '.jpg' in file:
-            im = cv2.imread(pred_path+'/'+file,mode='RGB')
-            preds.append(im)
+
+    for (root, dirs, gt_files) in os.walk(gt_path):
+        for file in gt_files:
+            if '.jpg' in file:
+                im = cv2.imread(root+'/'+file)
+                truths.append(im)
+    # pdb.set_trace()
+    for (root, dirs, pred_files) in os.walk(pred_path):
+        for file in pred_files:
+            if '.jpg' in file:
+                im = cv2.imread(root+'/'+file)
+                preds.append(im)
     print(f"{len(truths)} gt keyframes and {len(preds)} pred keyframes for {gt_path.split('/')[-1]}")
     
     if not metric_list:
@@ -39,7 +44,7 @@ def main(gt_path, pred_path,metrics == None):
         print("Precision: {prec}, Recall: {rec}, F-score: {f} using {metric} with threshold {thresh}")
     # save to file next
 
-if __name__ == 'main':
+if __name__ == '__main__':
     gt_path = sys.argv[1]
     pred_path = sys.argv[2]
     metrics = sys.argv[3] if len(sys.argv) > 3 else None
