@@ -10,7 +10,6 @@ thresholds = {
     "psnr":40, 
     "ssim":0.9, 
     "fsim":0.45, 
-    # "issm":, 
     "sre":42, 
     "uiq":0.1
 }
@@ -24,7 +23,7 @@ def main(gt_path, pred_path,metric_list = None):
             if '.jpg' in file:
                 im = cv2.imread(root+'/'+file)
                 truths.append(im)
-    # pdb.set_trace()
+    
     for (root, dirs, pred_files) in os.walk(pred_path):
         for file in pred_files:
             if '.jpg' in file:
@@ -32,17 +31,22 @@ def main(gt_path, pred_path,metric_list = None):
                 preds.append(im)
     print(f"{len(truths)} gt keyframes and {len(preds)} pred keyframes for {gt_path.split('/')[-1]}")
     
+    file = open(pred_path+'/evaluation.txt','w')
+
     if not metric_list:
-        metric_list = ["rmse","psnr","ssim","fsim","issm","sre","uiq"]
+        metric_list = ["rmse","psnr","ssim","fsim","sre","uiq"] 
     else:
         metric_list = metric_list.split(",")
     for metric in metric_list:
+        print('Evaluating with ' + metric + "............")
         thresh = thresholds[metric]
-        prec = precision(truths,preds,metric,thresh)
-        rec = recall(truths,preds,metric,thresh)
-        f = fscore(truths,preds,metric, thresh)
-        print("Precision: {prec}, Recall: {rec}, F-score: {f} using {metric} with threshold {thresh}")
-    # save to file next
+        gt, out = count_matches(truths,preds,metric,thresh)
+        prec = out / len(preds)
+        rec = gt / len(truths)
+        f = 0 if prec+rec == 0 else 2 * prec * rec / (prec + rec)
+        print(f"Precision: {prec}, Recall: {rec}, F-score: {f} using {metric} with threshold {thresh}")
+        file.write(f"Precision: {prec}, Recall: {rec}, F-score: {f} using {metric} with threshold {thresh}")
+    file.close()
 
 if __name__ == '__main__':
     gt_path = sys.argv[1]

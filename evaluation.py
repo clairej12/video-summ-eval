@@ -1,6 +1,7 @@
-import numpy
+import numpy as np
 # import image_similarity_measures
-from image_similarity_measures.quality_metrics import rmse, psnr, ssim, fsim, issm, sre, uiq  
+from image_similarity_measures.quality_metrics import rmse, psnr, ssim, fsim, sre, uiq  
+import pdb
 
 LESS = "smaller is better"
 GREATER = "larger is better"
@@ -9,7 +10,6 @@ direction = {
     "psnr": GREATER, 
     "ssim": GREATER, 
     "fsim": GREATER, 
-    # "issm":, 
     "sre": GREATER, 
     "uiq": GREATER
 }
@@ -23,8 +23,6 @@ def score(truth,pred,metric):
         score = ssim(truth, pred)
     elif metric == 'fsim': # ranges from [0,1]
         score = fsim(truth, pred)
-    elif metric == 'issm':
-        score = issm(truth, pred)
     elif metric == 'sre':
         score = sre(truth, pred)
     elif metric == 'uiq': # ranges from [-1,1]
@@ -34,39 +32,68 @@ def score(truth,pred,metric):
         print('Unknown metric')
     return score 
 
-def common_keyframes(truths,preds,metric,thresh,frames = False):
-    num_common = 0
-    if frames:
-        common = []
-    for pred in preds:
-        best_score = 0
-        matching = None
-        for truth in truths:
-            if score(truth,pred,metric) > best_score:
-                best_score = score(truth,pred,metric)
-                matching = truth
-        if (direction[metric] == GREATER and best_score >= thresh) \
-        or (direction[metric] == LESS and best_score <= thresh):
-            num_common +=1
-            if frames:
-                common.append((pred,matching,best_score))
-    if frames:
-        return num_common, common
-    return num_common
+def count_matches(truths,preds,metric,thresh):
+    gt = np.zeros(len(truths))
+    out = np.zeros(len(preds))
 
-def recall(truths,preds,metric,thresh):
-    num_common = common_keyframes(truths,preds,metric,thresh)
-    return num_common / len(truths)
+    for i,truth in enumerate(truths):
+        for j,pred in enumerate(preds):
+            img_score = score(truth,pred,metric)
+            if (direction[metric] == GREATER and img_score >= thresh) \
+            or (direction[metric] == LESS and img_score <= thresh):
+                # if gt[i] == 1 and out[j] == 1:
+                #     break
+                # elif gt[i] == 0 and out[j] == 0:
+                gt[i]=1
+                out[j]=1
+        # else:
+        #     continue
+        # break
+    return np.sum(gt), np.sum(out)
 
-def precision(truths,preds,metric,thresh):
-    num_common = common_keyframes(truths,preds,metric,thresh)
-    return num_common / len(preds)
+# def eval_metrics(truth, pred): # requires vectors of same dimensions
+#     overlap = np.sum(truth * pred)
+#     precision = overlap / len(pred)
+#     recall = overlap / len(truth)
+#     if precision == 0 and recall == 0:
+#         fscore = 0
+#     else:
+#         fscore = 2 * precision * recall / (precision + recall)
+#     return precision, recall, fscore
 
-def fscore(truths,preds,metric,thresh):
-    num_common = common_keyframes(truths,preds,metric,thresh)
-    prec = num_common / len(preds)
-    rec = num_common / len(truths)
-    return 2*prec*rec / (prec+rec)
+# def common_keyframes(truths,preds,metric,thresh,frames = False):
+#     num_common = 0
+#     if frames:
+#         common = []
+#     for pred in preds:
+#         best_score = 0
+#         matching = None
+#         for truth in truths:
+#             if score(truth,pred,metric) > best_score:
+#                 best_score = score(truth,pred,metric)
+#                 matching = truth
+#         if (direction[metric] == GREATER and best_score >= thresh) \
+#         or (direction[metric] == LESS and best_score <= thresh):
+#             num_common +=1
+#             if frames:
+#                 common.append((pred,matching,best_score))
+#     if frames:
+#         return num_common, common
+#     return num_common
+
+# def recall(truths,preds,metric,thresh):
+#     num_common = common_keyframes(truths,preds,metric,thresh)
+#     return num_common / len(truths)
+
+# def precision(truths,preds,metric,thresh):
+#     num_common = common_keyframes(truths,preds,metric,thresh)
+#     return num_common / len(preds)
+
+# def fscore(truths,preds,metric,thresh):
+#     num_common = common_keyframes(truths,preds,metric,thresh)
+#     prec = num_common / len(preds)
+#     rec = num_common / len(truths)
+#     return 2*prec*rec / (prec+rec)
 
 # Indices:
 #     def common_ind(truth,pred):
