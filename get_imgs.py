@@ -8,7 +8,7 @@ import pdb
 thresholds = {
     "rmse":0.01, 
     "psnr":40, 
-    "ssim":0.9, 
+    "ssim":0.98, 
     "fsim":0.45, 
     "sre":42, 
     "uiq":0.1
