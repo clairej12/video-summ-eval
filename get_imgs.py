@@ -31,6 +31,11 @@ def main(gt_path, pred_path,metric_list = None):
                 preds.append(im)
     print(f"{len(truths)} gt keyframes and {len(preds)} pred keyframes for {gt_path.split('/')[-1]}")
     
+    if truths[0].shape != preds[0].shape:
+        print(f"Resizing predictions of size {preds[0].shape} to match ground truth images of size {truths[0].shape}")
+        dim = (truths[0].shape[1],truths[0].shape[0])
+        preds = [cv2.resize(pred, dim, interpolation = cv2.INTER_AREA) for pred in preds]
+
     file = open(pred_path+'/evaluation.txt','w')
 
     if not metric_list:

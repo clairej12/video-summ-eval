@@ -2,6 +2,7 @@ import numpy as np
 # import image_similarity_measures
 from image_similarity_measures.quality_metrics import rmse, psnr, ssim, fsim, sre, uiq  
 import pdb
+import cv2
 
 LESS = "smaller is better"
 GREATER = "larger is better"
