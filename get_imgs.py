@@ -40,12 +40,12 @@ def main(gt_path, pred_path,metric_list = None):
     for metric in metric_list:
         print('Evaluating with ' + metric + "............")
         thresh = thresholds[metric]
-        gt, out = count_matches(truths,preds,metric,thresh)
+        gt, out, avg = count_matches(truths,preds,metric,thresh)
         prec = out / len(preds)
         rec = gt / len(truths)
         f = 0 if prec+rec == 0 else 2 * prec * rec / (prec + rec)
-        print(f"Precision: {prec}, Recall: {rec}, F-score: {f} using {metric} with threshold {thresh}")
-        file.write(f"Precision: {prec}, Recall: {rec}, F-score: {f} using {metric} with threshold {thresh}")
+        print(f"Precision: {prec}, Recall: {rec}, F-score: {f}, Avg: {avg} using {metric} with threshold {thresh}")
+        file.write(f"Precision: {prec}, Recall: {rec}, F-score: {f}, Avg: {avg} using {metric} with threshold {thresh}\n")
     file.close()
 
 if __name__ == '__main__':

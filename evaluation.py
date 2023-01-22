@@ -35,10 +35,12 @@ def score(truth,pred,metric):
 def count_matches(truths,preds,metric,thresh):
     gt = np.zeros(len(truths))
     out = np.zeros(len(preds))
+    avg = np.zeros(len(preds))
 
     for i,truth in enumerate(truths):
         for j,pred in enumerate(preds):
             img_score = score(truth,pred,metric)
+
             if (direction[metric] == GREATER and img_score >= thresh) \
             or (direction[metric] == LESS and img_score <= thresh):
                 # if gt[i] == 1 and out[j] == 1:
@@ -46,10 +48,11 @@ def count_matches(truths,preds,metric,thresh):
                 # elif gt[i] == 0 and out[j] == 0:
                 gt[i]=1
                 out[j]=1
+                avg[j]=img_score
         # else:
         #     continue
         # break
-    return np.sum(gt), np.sum(out)
+    return np.sum(gt), np.sum(out), np.sum(avg/len(preds))
 
 # def eval_metrics(truth, pred): # requires vectors of same dimensions
 #     overlap = np.sum(truth * pred)
