@@ -5,14 +5,16 @@ import sys
 from evaluation import *
 
 # metrics: 
-gt_path = '/home/jielin/claire/video-summ/keyframes/category/subcategory/test/kfs_per_scene/4/46.jpg'
-pred_path = '/home/jielin/claire/video-summ/keyframes/category/subcategory/test/kfs_per_scene/4/15.jpg'
+gt_path = '/mnt/data1/jielin/msmo/keyframe/animals/amphibians/ANIAMP0021/keyframe_3.jpg'
+pred_path = '/mnt/data1/claire/video-summ/sift/animals/amphibians/ANIAMP0021/_keyframes_/frame27.jpg'
 metrics = ["rmse","psnr","ssim","fsim","sre","uiq"] # "issm"
 
 truth = cv2.imread(gt_path)
 pred = cv2.imread(pred_path)
+dim = (truth.shape[1],truth.shape[0])
+pred = cv2.resize(pred, dim, interpolation = cv2.INTER_AREA)
 
-for metric in metrics:
-    print(metric + ": ", score(truth,pred,metric))
+# for metric in metrics:
+#     print(metric + ": ", score(truth,pred,metric))
 
-# print("issm: ", score(truth,pred,"issm"))
+print("rmse: ", score(truth,pred,"rmse"))

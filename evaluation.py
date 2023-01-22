@@ -49,7 +49,7 @@ def count_matches(truths,preds,metric,thresh):
                 # elif gt[i] == 0 and out[j] == 0:
                 gt[i]=1
                 out[j]=1
-                avg[j]=img_score
+                avg[j]=max(avg[j],img_score)
         # else:
         #     continue
         # break

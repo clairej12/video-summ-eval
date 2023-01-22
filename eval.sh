@@ -10,12 +10,12 @@ sampling_rate="1";
 for subcat in $OUT$cat/*/;do
     echo $subcat
     for vid in $subcat*/;do
-        echo $vid
+        # echo $vid
         cd $HOMEDIR
         # echo $folder_name
         trunc=$(dirname "$vid")
         subfolder=$(basename "$trunc")/$(basename "$vid")
-        echo $DIR$cat/$subfolder" and "$vid"_keyframes_"
+        echo $DIR$cat/$subfolder" vs "$vid"_keyframes_"
         # echo $OUT$subfolder/$folder_name/
         python get_imgs.py $DIR$cat/$subfolder $vid"_keyframes_"
     done
