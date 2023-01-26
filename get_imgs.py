@@ -39,7 +39,7 @@ def main(gt_path, pred_path,metric_list = None):
     file = open(pred_path+'/evaluation.txt','w')
 
     if not metric_list:
-        metric_list = ["rmse","psnr","ssim","fsim","sre","uiq"] 
+        metric_list = ["rmse","psnr","ssim","sre"] # "fsim", "uiq"
     else:
         metric_list = metric_list.split(",")
     for metric in metric_list:

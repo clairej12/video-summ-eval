@@ -10,9 +10,9 @@ class Video:
         self.rmse = None # [precision, recall, fscore, average]
         self.psnr = None
         self.ssim = None
-        self.fsim = None
+        # self.fsim = None
         self.sre = None
-        self.uiq = None
+        # self.uiq = None
 
 def get_metrics(line):
     if 'nan' in line:
@@ -24,7 +24,7 @@ def get_metrics(line):
 
 def parse(file):
     f = open(file,'r')
-    # print(file)
+    print(file)
     vid = Video()
     for line in f:
         # if line == None:
@@ -37,14 +37,14 @@ def parse(file):
             vid.psnr = get_metrics(line)
         elif 'ssim' in line:
             vid.ssim = get_metrics(line)
-        elif 'fsim' in line:
-            vid.fsim = get_metrics(line)
+        # elif 'fsim' in line:
+        #     vid.fsim = get_metrics(line)
         elif 'sre' in line:
             vid.sre = get_metrics(line)
             # if len(vid.sre) < 4:
             #     print(file, line)
-        elif 'uiq' in line:
-            vid.uiq = get_metrics(line)
+        # elif 'uiq' in line:
+        #     vid.uiq = get_metrics(line)
             # if len(vid.uiq) < 4:
             #     print(file, line)
         # else:
@@ -65,9 +65,11 @@ def main(path):
                 #     print(root+"/"+file)
                 videos.append(vid)
     # denom = len(videos)
+    print(len(videos))
     # pdb.set_trace()
     rmse = [vid.rmse for vid in videos if vid.rmse != None]
     denom = len(rmse)
+    print(denom)
     # pdb.set_trace()
     rmse = make_str([sum(x)/denom for x in zip(*rmse)])
 
@@ -77,23 +79,23 @@ def main(path):
     ssim = [vid.ssim for vid in videos if vid.ssim!=None]
     ssim = make_str([sum(x)/denom for x in zip(*ssim)])
 
-    fsim = [vid.fsim for vid in videos if vid.fsim!=None]
-    fsim = make_str([sum(x)/denom for x in zip(*fsim)])
+    # fsim = [vid.fsim for vid in videos if vid.fsim!=None]
+    # fsim = make_str([sum(x)/denom for x in zip(*fsim)])
 
     sre = [vid.sre for vid in videos if vid.sre!=None and len(vid.sre)==4]
     sre = make_str([sum(x)/denom for x in zip(*sre)])
     
     # pdb.set_trace()
-    uiq = [vid.uiq for vid in videos if vid.uiq!=None and len(vid.uiq)==4]
-    uiq = make_str([sum(x)/denom for x in zip(*uiq)])
+    # uiq = [vid.uiq for vid in videos if vid.uiq!=None and len(vid.uiq)==4]
+    # uiq = make_str([sum(x)/denom for x in zip(*uiq)])
     
     write_list = ['Avg precision, avg recall, avg fscore, avg score\n']
     write_list.append('rmse: '+rmse+'\n')
     write_list.append('psnr: '+psnr+'\n')
     write_list.append('ssim: '+ssim+'\n')
-    write_list.append('fsim: '+fsim+'\n')
+    # write_list.append('fsim: '+fsim+'\n')
     write_list.append('sre: '+sre+'\n')
-    write_list.append('uiq: '+uiq)
+    # write_list.append('uiq: '+uiq)
 
 
     f = open(path+"/summary_eval.txt", "w")

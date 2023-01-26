@@ -2,7 +2,7 @@
 
 cat=$1 # take first cmd line arg
 DIR=/mnt/data1/jielin/msmo/keyframe/; # /data/jielin/msmo/video/;
-OUT=/mnt/data1/claire/video-summ/uniform-samp/; # /home/jielin/claire/video-summ/keyframes/sift/;
+OUT=/mnt/data1/claire/video-summ/keyframe-extraction/; # /home/jielin/claire/video-summ/keyframes/sift/;
 HOMEDIR=$PWD;
 sampling_rate="1";
 
@@ -10,14 +10,19 @@ sampling_rate="1";
 for subcat in $OUT$cat/*/;do
     echo $subcat
     for vid in `find $subcat -name "*2[1-9]"`;do
-        # echo $vid
-        cd $HOMEDIR
-        # echo $folder_name
-        trunc=$(dirname "$vid")
-        subfolder=$(basename "$trunc")/$(basename "$vid")
-        echo $DIR$cat/$subfolder
-        echo $vid"/_keyframes_"
-        # echo $OUT$subfolder/$folder_name/
-        python get_imgs.py $DIR$cat/$subfolder $vid"/_keyframes_"
+        path=$vid"/kfs_per_scene/evaluation.txt"
+        if [ ! -f  "$path" ]
+        then
+            cd $HOMEDIR
+            # echo $folder_name
+            trunc=$(dirname "$vid")
+            subfolder=$(basename "$trunc")/$(basename "$vid")
+            echo $DIR$cat/$subfolder
+            echo $vid"/kfs_per_scene"
+            # echo $OUT$subfolder/$folder_name/
+            python get_imgs.py $DIR$cat/$subfolder $vid"/kfs_per_scene"
+        else
+            echo "Already evaluated"
+        fi
     done
 done
